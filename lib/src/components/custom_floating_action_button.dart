@@ -4,7 +4,7 @@ import 'package:imc/src/components/custom_textfield.dart';
 
 class CustomFloatingActionButton extends StatefulWidget {
   const CustomFloatingActionButton({super.key, required this.onSalvar});
-  final Function(double, double) onSalvar;
+  final Function(double) onSalvar;
 
   @override
   State<CustomFloatingActionButton> createState() =>
@@ -14,7 +14,6 @@ class CustomFloatingActionButton extends StatefulWidget {
 class _CustomFloatingActionButtonState
     extends State<CustomFloatingActionButton> {
   final _controladorPeso = TextEditingController();
-  final _controladorAltura = TextEditingController();
 
   void showDialogError(String? mensagem) {
     showDialog(
@@ -30,7 +29,6 @@ class _CustomFloatingActionButtonState
     return FloatingActionButton(
       onPressed: () {
         _controladorPeso.clear();
-        _controladorAltura.clear();
         showDialog(
           context: context,
           builder: (BuildContext bc) {
@@ -41,9 +39,11 @@ class _CustomFloatingActionButtonState
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  CustomTextField(controlador: _controladorPeso, label: "Peso"),
                   CustomTextField(
-                      controlador: _controladorAltura, label: "Altura"),
+                    controlador: _controladorPeso,
+                    label: "Peso",
+                    keyboardType: TextInputType.number,
+                  ),
                 ],
               ),
               actions: <Widget>[
@@ -57,16 +57,15 @@ class _CustomFloatingActionButtonState
                   onPressed: () {
                     try {
                       double peso = double.parse(_controladorPeso.text);
-                      double altura = double.parse(_controladorAltura.text);
 
                       // Certifica-se de que peso e altura são válidos
-                      if (peso <= 0 || altura <= 0) {
+                      if (peso <= 0 || peso >= 250) {
                         // Tratar valores inválidos, por exemplo, exibindo uma mensagem de erro
                         showDialogError(
                             'Valores de peso e altura devem ser maiores que zero.');
                       } else {
                         // Valores válidos, instancia a classe IMC
-                        widget.onSalvar(peso, altura);
+                        widget.onSalvar(peso);
                         Navigator.of(context).pop();
                       }
                     } catch (error) {
